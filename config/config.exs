@@ -1,6 +1,6 @@
 use Mix.Config
 
-config :seven, Seven.Entities, entity_app: :cafe
+config :seven, Seven.Entities, entity_app: :sevenotters_tester
 
 #
 # Mongo persistence
@@ -34,3 +34,5 @@ config :logger, :console,
 config :seven,
   print_commands: false,
   print_events: false
+
+config :logger, level: :error
