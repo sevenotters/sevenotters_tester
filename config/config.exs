@@ -8,6 +8,8 @@ config :seven, Seven.Entities, entity_app: :sevenotters_tester
 # config :seven,
 #   persistence: SevenottersMongo.Storage
 
+## See [docs](https://github.com/ericmj/mongodb/blob/master/lib/mongo.ex)
+## for flags documentation
 # config :seven, Seven.Data.Persistence,
 #   database: "cafe",
 #   hostname: "127.0.0.1",
