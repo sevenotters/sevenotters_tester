@@ -40,7 +40,6 @@ defmodule SevenottersTester.CommandValidationTester do
 
   def route(_command, _params), do: :not_routed
 
-  @spec pre_handle_command(Map.t(), any) :: {:managed, List.t()}
   defp pre_handle_command(%Seven.Otters.Command{type: @apply_semantic_validation_command, payload: %{data: :invalid_semantic_data}} = _command, _state) do
     {:routed_but_invalid, "invalid_semantic_data"}
   end
@@ -51,7 +50,6 @@ defmodule SevenottersTester.CommandValidationTester do
 
   defp pre_handle_command(_command, _state), do: :ok
 
-  @spec handle_command(Map.t(), any) :: {:managed, List.t()}
   defp handle_command(%Seven.Otters.Command{type: @apply_syntax_validation_command} = _command, _state) do
     {:managed, []}
   end
