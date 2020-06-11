@@ -5,12 +5,14 @@ defmodule SevenottersTester.CommandValidationTester do
 
   @apply_syntax_validation_command "ApplySyntaxValidation"
   @apply_semantic_validation_command "ApplySemanticValidation"
+  @apply_semantic_validation_on_command_command "ApplySemanticValidationOnCommand"
 
   @moduledoc """
     Aggregate to test command validation.
     Responds to commands:
     - #{@apply_syntax_validation_command}
     - #{@apply_semantic_validation_command}
+    - #{@apply_semantic_validation_on_command_command}
   """
 
   defp init_state, do: %__MODULE__{}
@@ -38,6 +40,17 @@ defmodule SevenottersTester.CommandValidationTester do
     |> validate_param()
   end
 
+  def route(@apply_semantic_validation_on_command_command, params) do
+    cmd = %{
+      number: params[:number],
+      data: params[:data]
+    }
+
+    @apply_semantic_validation_on_command_command
+    |> Seven.Otters.Command.create(cmd)
+    |> validate_param()
+  end
+
   def route(_command, _params), do: :not_routed
 
   defp pre_handle_command(%Seven.Otters.Command{type: @apply_semantic_validation_command, payload: %{data: :invalid_semantic_data}} = _command, _state) do
@@ -56,6 +69,10 @@ defmodule SevenottersTester.CommandValidationTester do
 
   defp handle_command(%Seven.Otters.Command{type: @apply_semantic_validation_command} = _command, _state) do
     {:managed, []}
+  end
+
+  defp handle_command(%Seven.Otters.Command{type: @apply_semantic_validation_on_command_command} = _command, _state) do
+    {:no_aggregate, "useless_aggregate_data"}
   end
 
   defp handle_event(_event, state), do: state

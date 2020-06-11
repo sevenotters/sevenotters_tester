@@ -80,7 +80,24 @@ defmodule CommandValidationTest do
         }
         |> Seven.CommandBus.send_command_request()
 
-      assert result == {:no_aggregate, "useless_aggregate_data"}
+      assert result == "useless_aggregate_data"
+      Process.sleep(500)
+      refute TestHelper.get_aggregate(SevenottersTester.CommandValidationTester, number)
+    end
+
+    test "send invalid data in command for useless aggregate on command" do
+      number = TestHelper.new_number()
+
+      result =
+        %Seven.CommandRequest{
+          id: TestHelper.new_id(),
+          command: "ApplySemanticValidationOnCommand",
+          sender: __MODULE__,
+          params: %{number: number, data: :useless_aggregate_data}
+        }
+        |> Seven.CommandBus.send_command_request()
+
+      assert result == "useless_aggregate_data"
       Process.sleep(500)
       refute TestHelper.get_aggregate(SevenottersTester.CommandValidationTester, number)
     end
