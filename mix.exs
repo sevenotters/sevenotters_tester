@@ -21,7 +21,10 @@ defmodule SevenottersTester.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:seven, path: "../sevenotters"}
+      {:bcrypt_elixir, "~> 2.2"},
+      {:seven, path: "../sevenotters"},
+      {:sevenotters_mongo, path: "../sevenotters_mongo"},
+      {:ve, "~> 0.1"}
     ]
   end
 end
