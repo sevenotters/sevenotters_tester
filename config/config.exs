@@ -5,10 +5,10 @@ config :seven, Seven.Entities, entity_app: :sevenotters_tester
 #
 # Mongo persistence
 #
-config :seven,
-  persistence: SevenottersMongo.Storage
 # config :seven,
-#   persistence: Seven.Data.InMemory
+#   persistence: SevenottersMongo.Storage
+config :seven,
+  persistence: Seven.Data.InMemory
 
 # See [docs](https://github.com/ericmj/mongodb/blob/master/lib/mongo.ex)
 # for flags documentation

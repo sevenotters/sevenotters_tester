@@ -56,6 +56,24 @@ defmodule SnapshottedAggregateTest do
     end)
   end
 
+  describe "Tester snapshotted projection" do
+    test "snapshot is created: non other events" do
+      wallet_number = SevenottersTester.SnapshotTesterProjection.special_id()
+
+      send_add_coins_commands(wallet_number, 1000)
+      Process.sleep(100)
+
+      events_in_proj = SevenottersTester.SnapshotTesterProjection.query(:events, nil)
+      assert events_in_proj == 1000
+
+      SevenottersTester.SnapshotTesterProjection.pid() |> kill()
+      wait_for_projection(20)
+
+      events_in_proj = SevenottersTester.SnapshotTesterProjection.query(:events, nil)
+      assert events_in_proj == 1000
+    end
+  end
+
   def kill(pid, timeout \\ 2_000) do
     true = Process.alive?(pid)
     ref = Process.monitor(pid)
@@ -67,6 +85,12 @@ defmodule SnapshottedAggregateTest do
     after
       timeout -> :timeout
     end
+  end
+
+  defp wait_for_projection(0), do: :timeout
+  defp wait_for_projection(n) do
+    Process.sleep(100)
+    if not is_pid(SevenottersTester.SnapshotTesterProjection.pid()), do: wait_for_projection(n - 1)
   end
 
   defp wait_for_unload(_number, 0), do: :timeout
