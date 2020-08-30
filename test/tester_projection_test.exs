@@ -4,7 +4,7 @@ defmodule TesterProjectionTest do
   describe "Tester projection" do
     test "send events and check state" do
       proj_name = :my_calculator
-      SevenottersTester.TesterProjection.start_link([name: proj_name, subscribe_to_eventstore: false])
+      SevenottersTester.TesterProjection.start_link(name: proj_name, subscribe_to_eventstore: false)
 
       Seven.Otters.Event.create("ValueAdded", %{v1: %{value: 5}}, __MODULE__)
       |> SevenottersTester.TesterProjection.send(proj_name)

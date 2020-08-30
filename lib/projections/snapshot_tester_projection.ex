@@ -1,5 +1,4 @@
 defmodule SevenottersTester.SnapshotTesterProjection do
-
   @coins_added_event "CoinsAdded"
 
   use Seven.Otters.Projection,

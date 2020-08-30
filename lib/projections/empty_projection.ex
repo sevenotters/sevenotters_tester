@@ -1,5 +1,4 @@
 defmodule SevenottersTester.EmptyProjection do
-
   use Seven.Otters.Projection,
     listener_of_events: []
 

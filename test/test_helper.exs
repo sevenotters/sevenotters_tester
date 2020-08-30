@@ -12,5 +12,5 @@ defmodule TestHelper do
   def new_id(), do: Seven.Data.Persistence.new_id() |> Seven.Data.Persistence.printable_id()
 
   @spec get_aggregate(atom(), String) :: String
-  def get_aggregate(module, correlation_id), do: Seven.Aggregates.is_loaded(module, correlation_id)
+  def get_aggregate(module, correlation_id), do: Seven.Registry.is_loaded(module, correlation_id)
 end

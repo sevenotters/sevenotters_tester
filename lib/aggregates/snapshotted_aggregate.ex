@@ -28,7 +28,7 @@ defmodule SevenottersTester.SnapshottedAggregate do
 
   def route(@wake_up_command, params) do
     cmd = %{
-      number: params[:number],
+      number: params[:number]
     }
 
     command = Seven.Otters.Command.create(@wake_up_command, cmd)
@@ -36,13 +36,14 @@ defmodule SevenottersTester.SnapshottedAggregate do
   end
 
   defp handle_command(%Seven.Otters.Command{type: @add_coins_command} = command, %{sum: sum}) do
-    {:managed, [
-      create_event(@coins_added_event, %{
-        number: command.payload.number,
-        coins: command.payload.coins,
-        sum: sum + command.payload.coins
-      })
-    ]}
+    {:managed,
+     [
+       create_event(@coins_added_event, %{
+         number: command.payload.number,
+         coins: command.payload.coins,
+         sum: sum + command.payload.coins
+       })
+     ]}
   end
 
   defp handle_command(%Seven.Otters.Command{type: @wake_up_command}, _state) do

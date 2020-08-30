@@ -78,8 +78,9 @@ defmodule SnapshottedAggregateTest do
     true = Process.alive?(pid)
     ref = Process.monitor(pid)
     Process.exit(pid, :kill)
+
     receive do
-       {:DOWN, ^ref, :process, ^pid, _reason} ->
+      {:DOWN, ^ref, :process, ^pid, _reason} ->
         refute Process.alive?(pid)
         pid
     after
@@ -88,15 +89,17 @@ defmodule SnapshottedAggregateTest do
   end
 
   defp wait_for_projection(0), do: :timeout
+
   defp wait_for_projection(n) do
     Process.sleep(100)
     if not is_pid(SevenottersTester.SnapshotTesterProjection.pid()), do: wait_for_projection(n - 1)
   end
 
   defp wait_for_unload(_number, 0), do: :timeout
+
   defp wait_for_unload(number, n) do
     Process.sleep(10)
-    if Seven.Aggregates.is_loaded(SevenottersTester.SnapshottedAggregate, number), do: wait_for_unload(number, n - 1)
+    if Seven.Registry.is_loaded(SevenottersTester.SnapshottedAggregate, number), do: wait_for_unload(number, n - 1)
   end
 
   defp get_snapshot(correlation_id) do
