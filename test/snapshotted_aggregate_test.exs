@@ -110,7 +110,7 @@ defmodule SnapshottedAggregateTest do
 
   defp kill_aggregate(number) do
     SevenottersTester.SnapshottedAggregate
-    |> TestHelper.get_aggregate(number)
+    |> TestHelper.get_registered_item(number)
     |> kill()
 
     wait_for_unload(number, 50)
@@ -118,7 +118,7 @@ defmodule SnapshottedAggregateTest do
 
   defp get_aggregate(number) do
     SevenottersTester.SnapshottedAggregate
-    |> TestHelper.get_aggregate(number)
+    |> TestHelper.get_registered_item(number)
     |> SevenottersTester.SnapshottedAggregate.state()
     |> assert()
   end

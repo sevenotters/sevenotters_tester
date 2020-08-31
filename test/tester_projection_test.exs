@@ -12,7 +12,7 @@ defmodule TesterProjectionTest do
       Seven.Otters.Event.create("ValueAdded", %{v1: %{value: 3}}, __MODULE__)
       |> SevenottersTester.TesterProjection.send(proj_name)
 
-      assert SevenottersTester.TesterProjection.state(proj_name) == 8
+      assert SevenottersTester.TesterProjection.state(proj_name).internal_state == 8
     end
   end
 end

@@ -15,7 +15,7 @@ defmodule CommandValidationTest do
         |> Seven.CommandBus.send_command_request()
 
       assert result == {:routed_but_invalid, "invalid_data"}
-      refute TestHelper.get_aggregate(SevenottersTester.CommandValidationTester, number)
+      refute TestHelper.get_registered_item(SevenottersTester.CommandValidationTester, number)
     end
 
     test "send valid data in command" do
@@ -31,7 +31,7 @@ defmodule CommandValidationTest do
         |> Seven.CommandBus.send_command_request()
 
       assert result == :managed
-      assert TestHelper.get_aggregate(SevenottersTester.CommandValidationTester, number)
+      assert TestHelper.get_registered_item(SevenottersTester.CommandValidationTester, number)
     end
   end
 
@@ -49,7 +49,7 @@ defmodule CommandValidationTest do
         |> Seven.CommandBus.send_command_request()
 
       assert result == {:routed_but_invalid, "invalid_semantic_data"}
-      assert TestHelper.get_aggregate(SevenottersTester.CommandValidationTester, number)
+      assert TestHelper.get_registered_item(SevenottersTester.CommandValidationTester, number)
     end
 
     test "send valid data in command" do
@@ -65,7 +65,7 @@ defmodule CommandValidationTest do
         |> Seven.CommandBus.send_command_request()
 
       assert result == :managed
-      assert TestHelper.get_aggregate(SevenottersTester.CommandValidationTester, number)
+      assert TestHelper.get_registered_item(SevenottersTester.CommandValidationTester, number)
     end
 
     test "send invalid data in command for useless aggregate" do
@@ -82,7 +82,7 @@ defmodule CommandValidationTest do
 
       assert result == "useless_aggregate_data"
       Process.sleep(500)
-      refute TestHelper.get_aggregate(SevenottersTester.CommandValidationTester, number)
+      refute TestHelper.get_registered_item(SevenottersTester.CommandValidationTester, number)
     end
 
     test "send invalid data in command for useless aggregate on command" do
@@ -99,7 +99,7 @@ defmodule CommandValidationTest do
 
       assert result == "useless_aggregate_data"
       Process.sleep(500)
-      refute TestHelper.get_aggregate(SevenottersTester.CommandValidationTester, number)
+      refute TestHelper.get_registered_item(SevenottersTester.CommandValidationTester, number)
     end
   end
 end

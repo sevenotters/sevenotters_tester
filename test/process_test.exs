@@ -56,22 +56,23 @@ defmodule ProcessTest do
       account2_id = TestHelper.new_number()
       deposit(account2_id, 10)
 
-      # Seven.EventStore.EventStore.subscribe("GoodsBought", self())
+      Seven.EventStore.EventStore.subscribe("GoodsBought", self())
       request_id = Seven.Data.Persistence.new_id()
+      process_id = Seven.Data.Persistence.new_id()
 
-      assert buy_goods(request_id, account1_id, 5, account2_id) == :managed
+      assert buy_goods(request_id, process_id, account1_id, 5, account2_id) == :managed
 
-      Process.sleep(500)
+      assert_receive %Seven.Otters.Event{type: "GoodsBought", request_id: ^request_id, correlation_module: SevenottersTester.BuyGoods}
 
-      # assert_receive %Seven.Otters.Event{type: "GoodsBought", request_id: ^request_id} #, correlation_module: Cafe.Aggregate.Table}
+      assert process_unloaded(process_id, 10) == :ok
 
       account1 = get_account(account1_id)
-      assert account1.total == 95
-      assert account1.goods == 10
+      assert account1.total == 105
+      assert account1.goods == 0
 
       account2 = get_account(account2_id)
-      assert account1.total == 15
-      assert account1.goods == 0
+      assert account2.total == 5
+      assert account2.goods == 10
     end
 
     # test "buy something: no funds - rollback" do
@@ -89,7 +90,7 @@ defmodule ProcessTest do
     #   assert_receive %Seven.Otters.Event{type: "GoodsNotBought", request_id: ^request_id} #, correlation_module: Cafe.Aggregate.Table}
 
     #   account1 = get_account(account1_id)
-    #   assert account1.total == 0
+    #   assert account1.total == 100
     #   assert account1.goods == 5
 
     #   account2 = get_account(account2_id)
@@ -125,12 +126,24 @@ defmodule ProcessTest do
   # Privates
   #
 
+  defp process_unloaded(_process_id, 0), do: :timeout
+
+  defp process_unloaded(process_id, n) do
+    Process.sleep(10)
+    if get_buy_process(process_id), do: process_unloaded(process_id, n - 1), else: :ok
+  end
+
   defp get_account(id) do
     SevenottersTester.UserAccountAggregate
-    |> TestHelper.get_aggregate(id)
+    |> TestHelper.get_registered_item(id)
     |> SevenottersTester.UserAccountAggregate.state()
     |> assert()
     |> Map.get(:internal_state)
+  end
+
+  defp get_buy_process(id) do
+    SevenottersTester.BuyGoods
+    |> TestHelper.get_registered_item(id)
   end
 
   defp withdraw(id, amount) do
@@ -173,12 +186,12 @@ defmodule ProcessTest do
     |> Seven.CommandBus.send_command_request()
   end
 
-  defp buy_goods(request_id, account1_id, goods, account2_id) do
+  defp buy_goods(request_id, process_id, account1_id, goods, account2_id) do
     %Seven.CommandRequest{
       id: request_id,
       command: "BuyGoods",
       sender: __MODULE__,
-      params: %{id: TestHelper.new_id(), from_id: account1_id, to_id: account2_id, goods: goods}
+      params: %{id: process_id, from_id: account1_id, to_id: account2_id, goods: goods}
     }
     |> Seven.CommandBus.send_command_request()
   end
