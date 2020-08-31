@@ -10,6 +10,7 @@ defmodule SevenottersTester.BuyGoods do
 
   @buy_goods_command "BuyGoods"
   @buy_goods_process_started_event "BuyGoodsStarted"
+  @buy_goods_process_error_event "BuyGoodsErrorOccurred"
 
   @moduledoc """
     Process to test process entity.
@@ -41,17 +42,23 @@ defmodule SevenottersTester.BuyGoods do
       goods: payload.goods
     }
 
-    %Seven.CommandRequest{
-      id: command.request_id,
-      process_id: process_id,
-      command: "WithdrawAmount",
-      params: %{id: payload.to_id, amount: payload.goods}
-    }
-    |> send_command(state)
+    res =
+      %Seven.CommandRequest{
+        id: command.request_id,
+        process_id: process_id,
+        command: "WithdrawAmount",
+        params: %{id: payload.to_id, amount: payload.goods}
+      }
+      |> send_command(state)
 
-    events = [create_event(@buy_goods_process_started_event, %{process_id: payload.id})]
-
-    {:continue, events, state}
+    case res do
+      :managed ->
+        events = [create_event(@buy_goods_process_started_event, %{process_id: payload.id})]
+        {:continue, events, state}
+      {:error, reason} ->
+        events = [create_event(@buy_goods_process_error_event, %{process_id: payload.id, reason: reason})]
+        {:error, reason, events, state}
+    end
   end
 
   @spec handle_event(Seven.Otters.Event, __MODULE__) :: __MODULE__
