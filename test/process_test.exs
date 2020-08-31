@@ -75,7 +75,7 @@ defmodule ProcessTest do
       assert account2.goods == 10
     end
 
-    test "buy something: no funds" do
+    test "buy something: no funds - no start" do
       account1_id = TestHelper.new_number()
       deposit(account1_id, 100)
 
@@ -88,7 +88,7 @@ defmodule ProcessTest do
 
       assert buy_goods(request_id, process_id, account1_id, 5, account2_id) == {:error, "no funds"}
 
-      assert_receive %Seven.Otters.Event{type: "BuyGoodsErrorOccurred", request_id: ^request_id, correlation_module: SevenottersTester.BuyGoods}
+      assert_receive %Seven.Otters.Event{type: "BuyGoodsErrorOccurred", request_id: ^request_id, correlation_module: SevenottersTester.BuyGoods, payload: %{reason: "no funds"}}
 
       assert process_unloaded(process_id, 10) == :ok
 
@@ -101,28 +101,31 @@ defmodule ProcessTest do
       assert account2.goods == 5
     end
 
-    # test "buy something: no enougth goods - rollback" do
-    #   account1_id = TestHelper.new_number()
-    #   deposit(account1_id, 100)
+    test "buy something: no enougth goods - rollback" do
+      account1_id = TestHelper.new_number()
+      deposit(account1_id, 100)
 
-    #   account2_id = TestHelper.new_number()
-    #   deposit(account2_id, 10)
+      account2_id = TestHelper.new_number()
+      deposit(account2_id, 10)
 
-    #   Seven.EventStore.EventStore.subscribe("GoodsNotBought", self())
-    #   request_id = Seven.Data.Persistence.new_id()
+      Seven.EventStore.EventStore.subscribe("BuyGoodsErrorOccurred", self())
+      request_id = Seven.Data.Persistence.new_id()
+      process_id = Seven.Data.Persistence.new_id()
 
-    #   assert buy_goods(account1_id, 10, account2_id) == :managed
+      assert buy_goods(request_id, process_id, account1_id, 10, account2_id) == :managed
 
-    #   assert_receive %Seven.Otters.Event{type: "GoodsNotBought", request_id: ^request_id} #, correlation_module: Cafe.Aggregate.Table}
+      assert_receive %Seven.Otters.Event{type: "BuyGoodsErrorOccurred", request_id: ^request_id, correlation_module: SevenottersTester.BuyGoods, payload: %{reason: "no enought goods"}}
 
-    #   account1 = get_account(account1_id)
-    #   assert account1.total == 100
-    #   assert account1.goods == 5
+      assert process_unloaded(process_id, 10) == :ok
 
-    #   account2 = get_account(account2_id)
-    #   assert account2.total == 10
-    #   assert account2.goods == 5
-    # end
+      account1 = get_account(account1_id)
+      assert account1.total == 100
+      assert account1.goods == 5
+
+      account2 = get_account(account2_id)
+      assert account2.total == 10
+      assert account2.goods == 5
+    end
   end
 
   #
