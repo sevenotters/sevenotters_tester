@@ -74,7 +74,7 @@ defmodule SnapshottedAggregateTest do
     end
   end
 
-  def kill(pid, timeout \\ 2_000) do
+  defp kill(pid, timeout \\ 2_000) do
     true = Process.alive?(pid)
     ref = Process.monitor(pid)
     Process.exit(pid, :kill)

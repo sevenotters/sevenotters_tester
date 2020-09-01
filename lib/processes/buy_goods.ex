@@ -5,7 +5,8 @@ defmodule SevenottersTester.BuyGoods do
     id: nil,
     from_id: nil,
     to_id: nil,
-    goods: nil
+    goods: nil,
+    status: :not_started
   ]
 
   @buy_goods_command "BuyGoods"
@@ -54,15 +55,14 @@ defmodule SevenottersTester.BuyGoods do
     case res do
       :managed ->
         events = [create_event(@buy_goods_process_started_event, %{process_id: payload.id})]
-        {:continue, events, state}
+        {:continue, events, %{state | status: :started}}
 
       {:error, reason} ->
         events = [create_event(@buy_goods_process_error_event, %{process_id: payload.id, reason: reason})]
-        {:error, reason, events, state}
+        {:error, reason, events, %{state | status: :error}}
     end
   end
 
-  @spec handle_event(Seven.Otters.Event, __MODULE__) :: __MODULE__
   defp handle_event(%Seven.Otters.Event{type: "AmountWithdrawed", payload: payload} = event, state) do
     if payload.id == state.to_id do
       res =
@@ -97,7 +97,7 @@ defmodule SevenottersTester.BuyGoods do
           |> send_command(state)
 
           events = [create_event(@buy_goods_process_error_event, %{process_id: payload.id, reason: reason})]
-          {:stop, events, state}
+          {:stop, events, %{state | status: :error}}
       end
     end
   end
@@ -113,7 +113,7 @@ defmodule SevenottersTester.BuyGoods do
       |> send_command(state)
 
       events = [create_event("GoodsBought", %{process_id: event.process_id})]
-      {:stop, events, state}
+      {:stop, events, %{state | status: :finished}}
     else
       {:continue, [], state}
     end

@@ -48,6 +48,50 @@ defmodule ProcessTest do
     end
   end
 
+  describe "Process persistence tester" do
+    test "kill and resume: check state" do
+      Process.flag(:trap_exit, true)
+
+      process_id = TestHelper.new_number()
+      new_persisted_process(process_id)
+
+      assert get_persisted_process(process_id).status == :started
+
+      pid = kill_process(process_id)
+      refute Process.alive?(pid)
+
+      Process.sleep(500)
+
+      assert get_persisted_process(process_id).status == :started
+      Process.flag(:trap_exit, false)
+    end
+
+    test "kill and resume: check if it still responds to events" do
+      Process.flag(:trap_exit, true)
+
+      process_id = TestHelper.new_number()
+      new_persisted_process(process_id)
+
+      assert get_persisted_process(process_id).status == :started
+
+      pid = kill_process(process_id)
+      refute Process.alive?(pid)
+
+      Process.sleep(100)
+
+      key = Atom.to_string(SevenottersTester.PersistedProcess) <> "_" <> process_id
+
+      event = Seven.Otters.Event.create("TouchPersistedProcess", %{}, SevenottersTester.PersistedProcess)
+      event = %{event | counter: 0, request_id: TestHelper.new_number(), process_id: key, correlation_id: key}
+      Seven.Utils.Events.trigger([event])
+
+      Process.sleep(100)
+
+      assert get_persisted_process(process_id).status == :touched
+      Process.flag(:trap_exit, false)
+    end
+  end
+
   describe "Process tester" do
     test "buy something: ok" do
       account1_id = TestHelper.new_number()
@@ -152,6 +196,24 @@ defmodule ProcessTest do
     |> TestHelper.get_registered_item(id)
   end
 
+  defp get_persisted_process(id) do
+    SevenottersTester.PersistedProcess
+    |> TestHelper.get_registered_item(id)
+    |> SevenottersTester.PersistedProcess.state()
+    |> assert()
+    |> Map.get(:internal_state)
+  end
+
+  defp new_persisted_process(id) do
+    %Seven.CommandRequest{
+      id: TestHelper.new_id(),
+      command: "StartPersistedProcess",
+      sender: __MODULE__,
+      params: %{id: id}
+    }
+    |> Seven.CommandBus.send_command_request()
+  end
+
   defp withdraw(id, amount) do
     %Seven.CommandRequest{
       id: TestHelper.new_id(),
@@ -200,5 +262,25 @@ defmodule ProcessTest do
       params: %{id: process_id, from_id: account1_id, to_id: account2_id, goods: goods}
     }
     |> Seven.CommandBus.send_command_request()
+  end
+
+  defp kill_process(process_id) do
+    SevenottersTester.PersistedProcess
+    |> TestHelper.get_registered_item(process_id)
+    |> kill()
+  end
+
+  def kill(pid, timeout \\ 2_000) do
+    true = Process.alive?(pid)
+    ref = Process.monitor(pid)
+    Process.exit(pid, :kill)
+
+    receive do
+      {:DOWN, ^ref, :process, ^pid, _reason} ->
+        refute Process.alive?(pid)
+        pid
+    after
+      timeout -> :timeout
+    end
   end
 end
