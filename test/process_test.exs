@@ -52,27 +52,27 @@ defmodule ProcessTest do
     test "kill and resume: check state" do
       Process.flag(:trap_exit, true)
 
-      process_id = TestHelper.new_number()
+      process_id = TestHelper.new_id()
       new_persisted_process(process_id)
 
-      assert get_persisted_process(process_id).status == :started
+      assert get_persisted_process(process_id).status == "started"
 
       pid = kill_process(process_id)
       refute Process.alive?(pid)
 
       Process.sleep(500)
 
-      assert get_persisted_process(process_id).status == :started
+      assert get_persisted_process(process_id).status == "started"
       Process.flag(:trap_exit, false)
     end
 
     test "kill and resume: check if it still responds to events" do
       Process.flag(:trap_exit, true)
 
-      process_id = TestHelper.new_number()
+      process_id = TestHelper.new_id()
       new_persisted_process(process_id)
 
-      assert get_persisted_process(process_id).status == :started
+      assert get_persisted_process(process_id).status == "started"
 
       pid = kill_process(process_id)
       refute Process.alive?(pid)
@@ -82,12 +82,12 @@ defmodule ProcessTest do
       key = Atom.to_string(SevenottersTester.PersistedProcess) <> "_" <> process_id
 
       event = Seven.Otters.Event.create("TouchPersistedProcess", %{}, SevenottersTester.PersistedProcess)
-      event = %{event | counter: 0, request_id: TestHelper.new_number(), process_id: key, correlation_id: key}
+      event = %{event | counter: 0, request_id: TestHelper.new_id(), process_id: key, correlation_id: key}
       Seven.Utils.Events.trigger([event])
 
       Process.sleep(100)
 
-      assert get_persisted_process(process_id).status == :touched
+      assert get_persisted_process(process_id).status == "touched"
       Process.flag(:trap_exit, false)
     end
   end
@@ -101,8 +101,8 @@ defmodule ProcessTest do
       deposit(account2_id, 10)
 
       Seven.EventStore.EventStore.subscribe("GoodsBought", self())
-      request_id = Seven.Data.Persistence.new_id()
-      process_id = Seven.Data.Persistence.new_id()
+      request_id = TestHelper.new_id()
+      process_id = TestHelper.new_id()
 
       assert buy_goods(request_id, process_id, account1_id, 5, account2_id) == :managed
 
@@ -127,8 +127,8 @@ defmodule ProcessTest do
       deposit(account2_id, 0)
 
       Seven.EventStore.EventStore.subscribe("BuyGoodsErrorOccurred", self())
-      request_id = Seven.Data.Persistence.new_id()
-      process_id = Seven.Data.Persistence.new_id()
+      request_id = TestHelper.new_id()
+      process_id = TestHelper.new_id()
 
       assert buy_goods(request_id, process_id, account1_id, 5, account2_id) == {:error, "no funds"}
 
@@ -153,8 +153,8 @@ defmodule ProcessTest do
       deposit(account2_id, 10)
 
       Seven.EventStore.EventStore.subscribe("BuyGoodsErrorOccurred", self())
-      request_id = Seven.Data.Persistence.new_id()
-      process_id = Seven.Data.Persistence.new_id()
+      request_id = TestHelper.new_id()
+      process_id = TestHelper.new_id()
 
       assert buy_goods(request_id, process_id, account1_id, 10, account2_id) == :managed
 

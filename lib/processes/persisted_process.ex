@@ -3,7 +3,7 @@ defmodule SevenottersTester.PersistedProcess do
 
   defstruct [
     id: nil,
-    status: :not_started
+    status: "not_started"
   ]
 
   @start_persisted_process_command "StartPersistedProcess"
@@ -25,11 +25,11 @@ defmodule SevenottersTester.PersistedProcess do
   end
 
   defp handle_command(%Seven.Otters.Command{type: @start_persisted_process_command} = command, _process_id, state) do
-    {:continue, [], %{state | id: command.payload.id, status: :started}}
+    {:continue, [], %{state | id: command.payload.id, status: "started"}}
   end
 
   @spec handle_event(Seven.Otters.Event, __MODULE__) :: map
   defp handle_event(%Seven.Otters.Event{type: "TouchPersistedProcess"}, state) do
-    {:continue, [], %{state | status: :touched}}
+    {:continue, [], %{state | status: "touched"}}
   end
 end
