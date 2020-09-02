@@ -24,6 +24,8 @@ defmodule SevenottersTester.UserAccountAggregate do
     - #{@remove_goods_command}
   """
 
+  # def command_timeout, do: 20_000
+
   defp init_state, do: %__MODULE__{}
 
   @spec route(bitstring, any) :: {:routed, map, atom} | {:invalid, map}
