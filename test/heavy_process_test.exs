@@ -2,7 +2,7 @@ defmodule HeavyProcessTest do
   use ExUnit.Case
 
   @timeout 20_000
-  @number_of_processes 1..2_000
+  @number_of_processes 1..1_000
 
   @tag timeout: :infinity
   describe "Stress test" do
