@@ -53,4 +53,12 @@ defmodule SevenottersTester.SnapshottedAggregate do
   defp handle_event(%Seven.Otters.Event{type: @coins_added_event, payload: %{number: number, sum: sum}}, state) do
     %{state | number: number, sum: sum}
   end
+
+  defp read_snapshot(correlation_id) do
+    Seven.Data.Persistence.get_snapshot(correlation_id)
+  end
+
+  defp write_snapshot(correlation_id, snapshot) do
+    Seven.Data.Persistence.upsert_snapshot(correlation_id, snapshot)
+  end
 end

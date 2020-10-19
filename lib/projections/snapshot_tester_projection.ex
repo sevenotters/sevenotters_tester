@@ -21,4 +21,12 @@ defmodule SevenottersTester.SnapshotTesterProjection do
   defp pre_handle_query(:events, _params, _state), do: :ok
 
   defp handle_query(:events, nil, %{events: events}), do: events
+
+  defp read_snapshot(correlation_id) do
+    Seven.Data.Persistence.get_snapshot(correlation_id)
+  end
+
+  defp write_snapshot(correlation_id, snapshot) do
+    Seven.Data.Persistence.upsert_snapshot(correlation_id, snapshot)
+  end
 end
