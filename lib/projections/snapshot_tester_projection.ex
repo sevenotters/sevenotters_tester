@@ -8,9 +8,7 @@ defmodule SevenottersTester.SnapshotTesterProjection do
 
   defp init_state, do: %{events: 0}
 
-  @special_id Seven.Data.Persistence.new_id() |> Seven.Data.Persistence.printable_id()
-
-  def special_id(), do: @special_id
+  def special_id(), do: "a26e97cc-ffae-4949-bbf0-4df6f1752d81"
 
   @spec handle_event(Seven.Otters.Event.t(), List.t()) :: List.t()
   defp handle_event(%Seven.Otters.Event{type: @coins_added_event, payload: data}, state) do
