@@ -1,5 +1,5 @@
 defmodule CommandValidationTest do
-  use ExUnit.Case
+  use SevenottersTester.ModelCase
 
   describe "Syntax validation" do
     test "send invalid data in command" do

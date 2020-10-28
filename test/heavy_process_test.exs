@@ -1,5 +1,5 @@
 defmodule HeavyProcessTest do
-  use ExUnit.Case
+  use SevenottersTester.ModelCase
 
   @timeout 20_000
   @number_of_processes 1..1_000

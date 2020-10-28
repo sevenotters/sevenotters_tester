@@ -1,5 +1,5 @@
 defmodule SnapshottedAggregateTest do
-  use ExUnit.Case
+  use SevenottersTester.ModelCase
 
   describe "Tester snapshotted aggregate" do
     test "snapshot is created: non other events" do
@@ -58,19 +58,21 @@ defmodule SnapshottedAggregateTest do
 
   describe "Tester snapshotted projection" do
     test "snapshot is created: non other events" do
+      items = 1000
+
       wallet_number = SevenottersTester.SnapshotTesterProjection.special_id()
 
-      send_add_coins_commands(wallet_number, 1000)
+      send_add_coins_commands(wallet_number, items)
       Process.sleep(100)
 
       events_in_proj = SevenottersTester.SnapshotTesterProjection.query(:events, nil)
-      assert events_in_proj == 1000
+      assert events_in_proj == items
 
       SevenottersTester.SnapshotTesterProjection.pid() |> kill()
       wait_for_projection(20)
 
       events_in_proj = SevenottersTester.SnapshotTesterProjection.query(:events, nil)
-      assert events_in_proj == 1000
+      assert events_in_proj == items
     end
   end
 

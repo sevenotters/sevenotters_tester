@@ -1,5 +1,5 @@
 defmodule ProcessTest do
-  use ExUnit.Case
+  use SevenottersTester.ModelCase
 
   describe "User account tester" do
     test "deposit and withdraw" do

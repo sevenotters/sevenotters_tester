@@ -1,5 +1,5 @@
 defmodule TesterProjectionTest do
-  use ExUnit.Case
+  use SevenottersTester.ModelCase
 
   describe "Tester projection" do
     test "send events and check state" do
