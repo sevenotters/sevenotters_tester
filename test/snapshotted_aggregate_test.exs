@@ -6,7 +6,7 @@ defmodule SnapshottedAggregateTest do
       wallet_number = TestHelper.new_number()
 
       send_add_coins_commands(wallet_number, 1000)
-      Process.sleep(100)
+      Process.sleep(1000)
 
       aggregate = get_aggregate(wallet_number)
       assert aggregate.snapshot.events_to_snapshot == 0
@@ -19,7 +19,7 @@ defmodule SnapshottedAggregateTest do
       wallet_number = TestHelper.new_number()
 
       send_add_coins_commands(wallet_number, 999)
-      Process.sleep(100)
+      Process.sleep(1000)
 
       aggregate = get_aggregate(wallet_number)
       assert aggregate.snapshot.events_to_snapshot == 99
@@ -38,7 +38,7 @@ defmodule SnapshottedAggregateTest do
         wallet_number = TestHelper.new_number()
 
         send_add_coins_commands(wallet_number, unquote(n))
-        Process.sleep(100)
+        Process.sleep(1000)
 
         old_state = get_aggregate(wallet_number)
         kill_aggregate(wallet_number)
@@ -63,7 +63,7 @@ defmodule SnapshottedAggregateTest do
       wallet_number = SevenottersTester.SnapshotTesterProjection.special_id()
 
       send_add_coins_commands(wallet_number, items)
-      Process.sleep(100)
+      Process.sleep(1000)
 
       events_in_proj = SevenottersTester.SnapshotTesterProjection.query(:events, nil)
       assert events_in_proj == items
