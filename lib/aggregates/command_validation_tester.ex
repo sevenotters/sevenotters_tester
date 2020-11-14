@@ -58,7 +58,8 @@ defmodule SevenottersTester.CommandValidationTester do
   end
 
   defp pre_handle_command(%Seven.Otters.Command{type: @apply_semantic_validation_command, payload: %{data: :useless_aggregate_data}} = _command, _state) do
-    {:no_aggregate, "useless_aggregate_data"}
+    unload_aggregate()
+    {:managed, []}
   end
 
   defp pre_handle_command(_command, _state), do: :ok
@@ -72,7 +73,8 @@ defmodule SevenottersTester.CommandValidationTester do
   end
 
   defp handle_command(%Seven.Otters.Command{type: @apply_semantic_validation_on_command_command} = _command, _state) do
-    {:no_aggregate, "useless_aggregate_data"}
+    unload_aggregate()
+    {:managed, []}
   end
 
   defp handle_event(_event, state), do: state

@@ -80,7 +80,7 @@ defmodule CommandValidationTest do
         }
         |> Seven.CommandBus.send_command_request()
 
-      assert result == "useless_aggregate_data"
+      assert result == {:managed, []}
       Process.sleep(500)
       refute TestHelper.get_registered_item(SevenottersTester.CommandValidationTester, number)
     end
@@ -97,7 +97,7 @@ defmodule CommandValidationTest do
         }
         |> Seven.CommandBus.send_command_request()
 
-      assert result == "useless_aggregate_data"
+      assert result == :managed
       Process.sleep(500)
       refute TestHelper.get_registered_item(SevenottersTester.CommandValidationTester, number)
     end
