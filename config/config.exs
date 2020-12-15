@@ -2,7 +2,6 @@ use Mix.Config
 
 config :seven, Seven.Entities, entity_app: :sevenotters_tester
 
-
 # PostgreSQL persistence
 #
 config :seven,
