@@ -28,7 +28,6 @@ defmodule SevenottersTester.MixProject do
     [
       {:bcrypt_elixir, "~> 2.2"},
       {:seven, path: "../sevenotters"},
-      {:sevenotters_mongo, path: "../sevenotters_mongo"},
       {:sevenotters_postgres, path: "../sevenotters_postgres"},
       {:ve, "~> 0.1"}
     ]
