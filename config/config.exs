@@ -12,6 +12,7 @@ config :seven, Seven.Entities, entity_app: :sevenotters_tester
 #
 config :seven,
   persistence: SevenottersPostgres.Storage
+
 #
 # InMemory persistence
 #

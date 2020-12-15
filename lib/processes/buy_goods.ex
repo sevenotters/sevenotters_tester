@@ -1,13 +1,11 @@
 defmodule SevenottersTester.BuyGoods do
   use Seven.Otters.Process, process_field: :id, listener_of_events: ["AmountWithdrawed", "GoodsAdded"]
 
-  defstruct [
-    id: nil,
-    from_id: nil,
-    to_id: nil,
-    goods: nil,
-    status: :not_started
-  ]
+  defstruct id: nil,
+            from_id: nil,
+            to_id: nil,
+            goods: nil,
+            status: :not_started
 
   @buy_goods_command "BuyGoods"
   @buy_goods_process_started_event "BuyGoodsStarted"
@@ -36,12 +34,7 @@ defmodule SevenottersTester.BuyGoods do
 
   defp handle_command(%Seven.Otters.Command{type: @buy_goods_command} = command, process_id, state) do
     payload = command.payload
-    state = %{state |
-      id: payload.id,
-      from_id: payload.from_id,
-      to_id: payload.to_id,
-      goods: payload.goods
-    }
+    state = %{state | id: payload.id, from_id: payload.from_id, to_id: payload.to_id, goods: payload.goods}
 
     res =
       %Seven.CommandRequest{

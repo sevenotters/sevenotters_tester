@@ -158,7 +158,12 @@ defmodule ProcessTest do
 
       assert buy_goods(request_id, process_id, account1_id, 10, account2_id) == :managed
 
-      assert_receive %Seven.Otters.Event{type: "BuyGoodsErrorOccurred", request_id: ^request_id, correlation_module: SevenottersTester.BuyGoods, payload: %{reason: "no enought goods"}}
+      assert_receive %Seven.Otters.Event{
+        type: "BuyGoodsErrorOccurred",
+        request_id: ^request_id,
+        correlation_module: SevenottersTester.BuyGoods,
+        payload: %{reason: "no enought goods"}
+      }
 
       assert process_unloaded(process_id, 10) == :ok
 
