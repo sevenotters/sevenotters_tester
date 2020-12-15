@@ -1,6 +1,5 @@
 Seven.Test.Helper.drop_events()
 Seven.Test.Helper.drop_processes()
-Seven.Test.Helper.clean_projections()
 
 ExUnit.start()
 
