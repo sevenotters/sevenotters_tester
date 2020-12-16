@@ -1,6 +1,3 @@
-Seven.Test.Helper.drop_events()
-Seven.Test.Helper.drop_processes()
-
 ExUnit.start()
 
 defmodule TestHelper do
