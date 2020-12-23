@@ -1,10 +1,8 @@
 defmodule SevenottersTester.PersistedProcess do
   use Seven.Otters.Process, process_field: :id, listener_of_events: ["TouchPersistedProcess"]
 
-  defstruct [
-    id: nil,
-    status: "not_started"
-  ]
+  defstruct id: nil,
+            status: "not_started"
 
   @start_persisted_process_command "StartPersistedProcess"
 

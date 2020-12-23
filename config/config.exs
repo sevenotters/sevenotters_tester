@@ -2,16 +2,15 @@ use Mix.Config
 
 config :seven, Seven.Entities, entity_app: :sevenotters_tester
 
-#
-# Mongo persistence
-#
-# config :seven,
-#   persistence: SevenottersMongo.Storage
-#
 # PostgreSQL persistence
 #
 config :seven,
   persistence: SevenottersPostgres.Storage
+
+# Mongo persistence
+#
+# config :seven,
+#   persistence: SevenottersMongo.Storage
 #
 # InMemory persistence
 #

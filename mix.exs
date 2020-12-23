@@ -8,7 +8,8 @@ defmodule SevenottersTester.MixProject do
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -28,9 +29,12 @@ defmodule SevenottersTester.MixProject do
     [
       {:bcrypt_elixir, "~> 2.2"},
       {:seven, path: "../sevenotters"},
-      {:sevenotters_mongo, path: "../sevenotters_mongo"},
       {:sevenotters_postgres, path: "../sevenotters_postgres"},
       {:ve, "~> 0.1"}
     ]
+  end
+
+  defp aliases do
+    [test: ["ecto.drop", "ecto.create", "ecto.migrate", "test"]]
   end
 end
